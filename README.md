@@ -18,7 +18,7 @@ Requirements for the software and other tools to build, test and push
 
 Clone this git repository
 
-    git clone sample
+    git clone https://github.com/Protract-123/BearSSL-PS3
 
 CD into the repository
 
@@ -29,4 +29,4 @@ Run the included powershell script
     ./init_vcxproj.ps1
 
 Now you can open BearSSL.vcxproj and build the library which will be built into a seperate directory.  
-I suggest copying your static linked library and the "inc" folder to somewhere else for easier usage.
+I suggest copying the built static linked library and the "inc" folder to somewhere else for easier usage.
