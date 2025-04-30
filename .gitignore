@@ -1,0 +1,11 @@
+/.vs
+/BearSSL/**/*.c
+/BearSSL/**/*.t0
+/BearSSL/**/*.h
+/BearSSL/PS3_Release
+/PS3_Release
+*.suo
+*.sdf
+*.user
+*.VC.db
+*.opendb
