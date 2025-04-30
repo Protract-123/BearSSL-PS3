@@ -9,3 +9,5 @@
 *.user
 *.VC.db
 *.opendb
+/BearSSL-Test/PS3_Release/BearSSL-Test.tlog
+/BearSSL-Test/PS3_Release

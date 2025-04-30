@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BearSSL", "BearSSL\BearSSL.vcxproj", "{8A84FE70-D9B6-4883-AF2E-BE95350E42C8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BearSSL-Test", "BearSSL-Test\BearSSL-Test.vcxproj", "{EF70A758-C395-4F1B-8FA1-DE566057170A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BearSSL-Test", "BearSSL-Test\BearSSL-Test.vcxproj", "{AAE8F94E-A3C9-4A4E-B681-BB4C6B4054AA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8A84FE70-D9B6-4883-AF2E-BE95350E42C8} = {8A84FE70-D9B6-4883-AF2E-BE95350E42C8}
 	EndProjectSection
@@ -20,12 +20,15 @@ Global
 		{8A84FE70-D9B6-4883-AF2E-BE95350E42C8}.Debug|PS3.Build.0 = Debug|PS3
 		{8A84FE70-D9B6-4883-AF2E-BE95350E42C8}.Release|PS3.ActiveCfg = Release|PS3
 		{8A84FE70-D9B6-4883-AF2E-BE95350E42C8}.Release|PS3.Build.0 = Release|PS3
-		{EF70A758-C395-4F1B-8FA1-DE566057170A}.Debug|PS3.ActiveCfg = Debug|PS3
-		{EF70A758-C395-4F1B-8FA1-DE566057170A}.Debug|PS3.Build.0 = Debug|PS3
-		{EF70A758-C395-4F1B-8FA1-DE566057170A}.Release|PS3.ActiveCfg = Release|PS3
-		{EF70A758-C395-4F1B-8FA1-DE566057170A}.Release|PS3.Build.0 = Release|PS3
+		{AAE8F94E-A3C9-4A4E-B681-BB4C6B4054AA}.Debug|PS3.ActiveCfg = Debug|PS3
+		{AAE8F94E-A3C9-4A4E-B681-BB4C6B4054AA}.Debug|PS3.Build.0 = Debug|PS3
+		{AAE8F94E-A3C9-4A4E-B681-BB4C6B4054AA}.Release|PS3.ActiveCfg = Release|PS3
+		{AAE8F94E-A3C9-4A4E-B681-BB4C6B4054AA}.Release|PS3.Build.0 = Release|PS3
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6ABF60F-DC40-441A-B78E-EDCF68373DEB}
 	EndGlobalSection
 EndGlobal
