@@ -13,6 +13,7 @@ These instructions will build BearSSL as a static linked library which can then 
 Requirements for the software and other tools to build, test and push 
 - [Visual Studio (2013 or greater)](https://visualstudio.microsoft.com/downloads/)
 - PS3 SDK Version 4.75
+- [Git](https://git-scm.com/downloads)
 
 ### Installing
 
@@ -22,11 +23,11 @@ Clone this git repository
 
 CD into the repository
 
-    cd ./BearSSL-PS3
+    cd .\BearSSL-PS3\
 
 Run the included powershell script
 
-    ./init_vcxproj.ps1
+    .\init_vcxproj.ps1
 
-Now you can open BearSSL.vcxproj and build the library which will be built into a seperate directory.  
+Now you can open BearSSL.vcxproj and build the library which will be built into either PS3_Debug or PS3_Release depending on your build configuration.  
 I suggest copying the built static linked library and the "inc" folder to somewhere else for easier usage.
