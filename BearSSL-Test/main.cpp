@@ -1,100 +1,90 @@
-#include <iostream>
-#include <string>
-#include <cstring>
+#include <stdio.h>
+#include <netex/net.h>
+#include <sys/process.h>
+#include <string.h>
+#include <stdlib.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <bearssl.h>
+#include <unistd.h>
+#include <netinet/in.h>
 #include <libpsutil.h>
+#include <cell/sysmodule.h>
+#include <inttypes.h>
 
 using namespace libpsutil::network;
 
-int32_t userMain(void);
+SYS_PROCESS_PARAM(1001, 0x10000)
 
-std::string resolve_hostname(const std::string& hostname)
+int main(void)
 {
-    struct hostent* host_entry = gethostbyname(hostname.c_str());
-    if (host_entry == nullptr)
-    {
-        printf("[DNS]: Failed to resolve hostname: %s\n", hostname.c_str());
-        return "";
-    }
+	int ret;
 
-    struct in_addr addr;
-    addr.s_addr = *((unsigned long*)host_entry->h_addr_list[0]);
-    std::string ip = inet_ntoa(addr);
+	ret = cellSysmoduleLoadModule(CELL_SYSMODULE_HTTP);
+	if (ret < 0) {
+		printf("cellSysmoduleLoadModule failed (0x%x)\n", ret);
+		return 0;
+	}
 
-    printf("[DNS]: Resolved %s to %s\n", hostname.c_str(), ip.c_str());
-    return ip;
-}
+	/*E start network */
+	ret = sys_net_initialize_network();
+	if (ret < 0) {
+		printf("sys_net_initialize_network() failed (0x%x)\n", ret);
+		return 0;
+	}
 
-static bool http_get_request(const std::string& hostname, const std::string& path = "/")
-{
-    printf("[HTTP]: Starting request to %s%s\n", hostname.c_str(), path.c_str());
+	// User Start
+	const std::string& hostname = "httpbin.org";
+	hostent* host = gethostbyname(hostname.data());
 
-    // Resolve hostname to IP
-    std::string server_ip = resolve_hostname(hostname);
-    if (server_ip.empty())
-    {
-        return false;
-    }
+	char* ip_buffer = inet_ntoa(*(struct in_addr*)host->h_addr_list[0]);
 
-    // Create TCP socket
-    socket web_socket(server_ip, 80, socket_type::SOCKET_TYPE_TCP);
-
-    // Connect to server
-    if (!web_socket.connect())
-    {
-        printf("[HTTP]: Connection failed\n");
-        return false;
-    }
-
-    printf("[HTTP]: Connected successfully\n");
-
-    // Build HTTP request
-    std::string request =
-        "GET " + path + " HTTP/1.1\r\n"
-        "Host: " + hostname + "\r\n"
-        "Connection: close\r\n"
-        "\r\n";
-
-    printf("[HTTP]: Sending request...\n");
-
-    // Send request
-    if (!web_socket.send(request.c_str(), request.length()))
-    {
-        printf("[HTTP]: Failed to send request\n");
-        web_socket.close();
-        return false;
-    }
-
-    printf("[HTTP]: Request sent, waiting for response...\n");
-
-    // Receive response
-    char response[4096];
-    memset(response, 0, sizeof(response));
-
-    if (web_socket.receive(response, sizeof(response) - 1))
-    {
-        printf("[HTTP]: Response received:\n");
-        printf("-----------------------------------\n");
-        printf("%s\n", response);
-        printf("-----------------------------------\n");
-    }
-    else
-    {
-        printf("[HTTP]: Failed to receive response\n");
-        web_socket.close();
-        return false;
-    }
-
-    web_socket.close();
-    printf("[HTTP]: Connection closed\n");
-    return true;
-}
+	printf("IP: %s\n", ip_buffer);
 
 
-int32_t userMain(void)
-{
-	printf("Welcome to a simple http sample\n");
-    http_get_request("httpbin.org", "/ip");
+
+	socket http_socket(ip_buffer, 80, SOCKET_TYPE_TCP);
+	
+	if (!http_socket.connect()) {
+		printf("Socket failed to connect");
+		http_socket.close();
+		return 1;
+	}
+
+	std::string http_request =
+		"GET /get HTTP/1.1\r\n"
+		"Host: httpbin.org\r\n"
+		"User-Agent: SimpleClient/1.0\r\n"
+		"Connection: close\r\n"
+		"\r\n";
+
+	if (!http_socket.send(http_request.c_str(), http_request.length())) {
+		printf("Failed to send HTTP request");
+		http_socket.close();
+		return -1;
+	}
+
+	// Receive the response
+	char response_buffer[4096];
+	memset(response_buffer, 0, sizeof(response_buffer));
+
+	if (!http_socket.receive(response_buffer, sizeof(response_buffer) - 1))
+	{
+		printf("Failed to receive HTTP response");
+		http_socket.close();
+		return -1;
+	}
+
+	printf(response_buffer);
+
+	http_socket.close();
+
+	sys_net_finalize_network();
+
+	/*E unload relocatable modules */
+	ret = cellSysmoduleUnloadModule(CELL_SYSMODULE_HTTP);
+	if (ret < 0) {
+		printf("cellSysmoduleUnloadModule failed (0x%x)\n", ret);
+		return 0;
+	}
+	return 0;
 }
