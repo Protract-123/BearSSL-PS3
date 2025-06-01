@@ -7,8 +7,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <cstdlib>
-
-#include "bearssl.h"
+#include <bearssl.h>
 
 constexpr int BUFFER_SIZE = 4096;
 

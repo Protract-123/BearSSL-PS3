@@ -46,7 +46,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|PS3'">
-    <IncludePath>$(SolutionDir)BearSSL\inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <TargetExt>.elf</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|PS3'">
     <ClCompile>
@@ -60,13 +61,22 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <OptimizationLevel>Level2</OptimizationLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(SolutionDir)BearSSL\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CppLanguageStd>Cpp11</CppLanguageStd>
     </ClCompile>
     <Link>
       <AdditionalDependencies>BearSSL.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)_$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OutputFormat>ELFFile</OutputFormat>
     </Link>
+    <PostBuildEvent>
+      <Command>cd "$(SolutionDir)vendor\scetool\bin\"
+scetool.exe -0 SELF -1 TRUE -s FALSE -2 0A -3 1070000052000001 -4 01000002 -5 APP -6 0003004000000000 -A 0001000000000000 --self-ctrl-flags 4000000000000000000000000000000000000000000000000000000000000002 -e "$(TargetDir)$(TargetName)$(TargetExt)" "$(TargetDir)$(TargetName).self"
+
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="init.cpp" />

@@ -11,3 +11,6 @@
 *.opendb
 /BearSSL-Test/PS3_Release/BearSSL-Test.tlog
 /BearSSL-Test/PS3_Release
+/BearSSL/PS3_Debug
+/BearSSL-Test/PS3_Debug
+/PS3_Debug
