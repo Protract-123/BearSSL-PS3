@@ -53,7 +53,7 @@ $lines = Get-Content $filePath
 # Add .c files to vcxproj
 $CFiles | ForEach-Object {  
     $include_line = "    <ClCompile Include=`"$($_.Name)`" />"
-    $lines = $lines[0..63] + $include_line + $lines[63..($lines.Count - 1)]
+    $lines = $lines[0..62] + $include_line + $lines[63..($lines.Count - 1)]
 }
 
 Set-Content -Path $filePath -Value $lines
