@@ -1,142 +1,100 @@
 #include <iostream>
-#include <cstring>
 #include <string>
-#include <unistd.h>
-#include <netinet/in.h>
+#include <cstring>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <sys/socket.h>
-#include <cstdlib>
 #include <bearssl.h>
+#include <libpsutil.h>
 
-constexpr int BUFFER_SIZE = 4096;
+using namespace libpsutil::network;
 
-int string_to_port(const char* port_str) {
-    int port = 0;
-    while (*port_str >= '0' && *port_str <= '9') {
-        port = port * 10 + (*port_str - '0');
-        ++port_str;
+int32_t userMain(void);
+
+std::string resolve_hostname(const std::string& hostname)
+{
+    struct hostent* host_entry = gethostbyname(hostname.c_str());
+    if (host_entry == nullptr)
+    {
+        printf("[DNS]: Failed to resolve hostname: %s\n", hostname.c_str());
+        return "";
     }
-    return port;
+
+    struct in_addr addr;
+    addr.s_addr = *((unsigned long*)host_entry->h_addr_list[0]);
+    std::string ip = inet_ntoa(addr);
+
+    printf("[DNS]: Resolved %s to %s\n", hostname.c_str(), ip.c_str());
+    return ip;
 }
 
-// Low-level read callback for BearSSL I/O
-static int sock_read(void* ctx, unsigned char* buf, size_t len) {
-    int fd = *reinterpret_cast<int*>(ctx);
-    while (true) {
-        ssize_t r = ::read(fd, buf, len);
-        if (r < 0) {
-            if (errno == EINTR) continue;
-            return -1;
-        }
-        return static_cast<int>(r);
-    }
-}
+static bool http_get_request(const std::string& hostname, const std::string& path = "/")
+{
+    printf("[HTTP]: Starting request to %s%s\n", hostname.c_str(), path.c_str());
 
-// Low-level write callback for BearSSL I/O
-static int sock_write(void* ctx, const unsigned char* buf, size_t len) {
-    int fd = *reinterpret_cast<int*>(ctx);
-    while (true) {
-        ssize_t w = ::write(fd, buf, len);
-        if (w < 0) {
-            if (errno == EINTR) continue;
-            return -1;
-        }
-        return static_cast<int>(w);
-    }
-}
-
-int main() {
-    const char* host = "example.com";
-    const char* port = "443";              // Use 443 for HTTPS
-    bool use_https = std::string(port) == "443";
-
-    // Resolve hostname
-    hostent* server = gethostbyname(host);
-    if (!server) {
-        std::cerr << "Error: no such host: " << host << std::endl;
-        return 1;
+    // Resolve hostname to IP
+    std::string server_ip = resolve_hostname(hostname);
+    if (server_ip.empty())
+    {
+        return false;
     }
 
-    // Create socket
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("socket");
-        return 1;
+    // Create TCP socket
+    socket web_socket(server_ip, 80, socket_type::SOCKET_TYPE_TCP);
+
+    // Connect to server
+    if (!web_socket.connect())
+    {
+        printf("[HTTP]: Connection failed\n");
+        return false;
     }
 
-    // Build server address
-    sockaddr_in server_addr{};
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(string_to_port(port));
-    std::memcpy(&server_addr.sin_addr, server->h_addr, server->h_length);
-
-    // Connect
-    if (connect(sockfd, reinterpret_cast<sockaddr*>(&server_addr), sizeof(server_addr)) < 0) {
-        perror("connect");
-        close(sockfd);
-        return 1;
-    }
-
-    // If HTTPS, perform TLS handshake
-    br_sslio_context ioc;
-    if (use_https) {
-        // Initialize BearSSL client context
-        br_ssl_client_context sc;
-        br_x509_minimal_context xc;
-        unsigned char iobuf[BR_SSL_BUFSIZE_BIDI];
-        
-        br_ssl_client_init_full(&sc, &xc, TAs, TAs_NUM);
-        br_ssl_engine_set_buffer(&sc.eng, iobuf, sizeof iobuf, 1);
-        br_ssl_client_reset(&sc, host, 0);
-        br_sslio_init(&ioc, &sc.eng, sock_read, &sockfd, sock_write, &sockfd);
-    }
+    printf("[HTTP]: Connected successfully\n");
 
     // Build HTTP request
-    std::string request = "GET / HTTP/1.1\r\n"
-        "Host: " + std::string(host) + "\r\n"
-        "Connection: close\r\n\r\n";
+    std::string request =
+        "GET " + path + " HTTP/1.1\r\n"
+        "Host: " + hostname + "\r\n"
+        "Connection: close\r\n"
+        "\r\n";
 
-    if (use_https) {
-        // Send over TLS
-        br_sslio_write_all(&ioc, reinterpret_cast<const unsigned char*>(request.c_str()), request.size());
-        br_sslio_flush(&ioc);
-    }
-    else {
-        // Plain HTTP
-        if (send(sockfd, request.c_str(), request.size(), 0) < 0) {
-            perror("send");
-            close(sockfd);
-            return 1;
-        }
+    printf("[HTTP]: Sending request...\n");
+
+    // Send request
+    if (!web_socket.send(request.c_str(), request.length()))
+    {
+        printf("[HTTP]: Failed to send request\n");
+        web_socket.close();
+        return false;
     }
 
-    // Read response
-    char buffer[BUFFER_SIZE];
-    int rlen;
-    if (use_https) {
-        while ((rlen = br_sslio_read(&ioc, reinterpret_cast<unsigned char*>(buffer), sizeof(buffer) - 1)) > 0) {
-            buffer[rlen] = '\0';
-            std::cout << buffer;
-        }
+    printf("[HTTP]: Request sent, waiting for response...\n");
+
+    // Receive response
+    char response[4096];
+    memset(response, 0, sizeof(response));
+
+    if (web_socket.receive(response, sizeof(response) - 1))
+    {
+        printf("[HTTP]: Response received:\n");
+        printf("-----------------------------------\n");
+        printf("%s\n", response);
+        printf("-----------------------------------\n");
     }
-    else {
-        ssize_t bytes_received;
-        while ((bytes_received = recv(sockfd, buffer, BUFFER_SIZE - 1, 0)) > 0) {
-            buffer[bytes_received] = '\0';
-            std::cout << buffer;
-        }
-        if (bytes_received < 0) perror("recv");
+    else
+    {
+        printf("[HTTP]: Failed to receive response\n");
+        web_socket.close();
+        return false;
     }
 
-    // Close socket
-    close(sockfd);
-    return 0;
+    web_socket.close();
+    printf("[HTTP]: Connection closed\n");
+    return true;
 }
 
 
 int32_t userMain(void)
 {
 	printf("Welcome to a simple http sample\n");
-    main();
+    http_get_request("httpbin.org", "/ip");
 }

@@ -65,7 +65,7 @@
       <CppLanguageStd>Cpp11</CppLanguageStd>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>BearSSL.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>BearSSL.a;-lpsutil;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)_$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
