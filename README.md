@@ -3,7 +3,9 @@
 A project which will initialise a vcxproj file which can then be used to build BearSSL for the PS3. Utilises the official PS3 SDK and NOT PSL1GHT.  
 This project also includes a test application for the same, which has a decent example of what you need to do in order to implement BearSSL in your own PS3 project.
 
-BearSSL can be found here : https://www.bearssl.org/
+BearSSL can be found here : https://www.bearssl.org/  
+
+If you notice something wrong with the readme, some issue with the compiled BearSSL library or any other problem please make an issue describing the problem.  
 
 ## Using this Project
 
@@ -42,6 +44,8 @@ These steps will initialize the vcxproj for the BearSSL library itself.
 3. Build the entire solution
 
 This will create the PS3_Release folder in the root of the cloned git repository. This should contain BearSSL.a and BearSSL-Test.self.  
-The test application can then be run, and it should print a variety of logs which can be viewed through a tool like ProDG.
+The test application can then be run, and it should print a variety of logs which can be viewed through a tool like ProDG.  
+
+Please note that there may be an error when building using a fresh copy of the PS3 SDK. If you go to the source of the file which has the issue, there should be multiple "noexcept" which can be removed to fix the error. No idea if this is good practice, but it's what worked for me
 
 I suggest copying the built static linked library and the "inc" folder to somewhere in usr\local\cell so it can be easily used in your projects.
