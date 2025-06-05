@@ -49,3 +49,9 @@ The test application can then be run, and it should print a variety of logs whic
 Please note that there may be an error when building using a fresh copy of the PS3 SDK. If you go to the source of the file which has the issue, there should be multiple "noexcept" which can be removed to fix the error. No idea if this is good practice, but it's what worked for me
 
 I suggest copying the built static linked library and the "inc" folder to somewhere in usr\local\cell so it can be easily used in your projects.
+
+## SSL Info
+The ssl results can be found [Here](ssl_info.json). They were generated through https://www.howsmyssl.com/a/check through the test app includes in this repository
+
+## License
+This project uses the MIT License which can be found [Here](LICENSE)
