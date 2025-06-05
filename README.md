@@ -15,6 +15,9 @@ Requirements for the software and other tools to build, test and push
 - [Visual Studio (2013 or greater)](https://visualstudio.microsoft.com/downloads/)
 - PS3 SDK Version 4.75
 - [Git](https://git-scm.com/downloads)
+- [libpsutil](https://github.com/skiff/libpsutil/releases/tag/1.0.5) - May be required, not tested
+
+I would use this guide to get everything setup if you don't have it setup already - https://www.youtube.com/watch?v=j7Mgl4oVACM
 
 ### Setting Up
 
