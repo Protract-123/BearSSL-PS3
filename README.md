@@ -60,7 +60,7 @@ I suggest copying the built static linked library and the "inc" folder to somewh
 
 ## SSL Info
 
-The SSL results can be found [here](ssl_info.json). They were generated through https://www.howsmyssl.com/a/check through the test app included in this repository.
+The SSL results can be found [here](ssl_info.json). They were generated through https://www.howsmyssl.com/a/check via the test app included in this repository.
 
 ## License
 
