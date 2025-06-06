@@ -265,6 +265,7 @@ static void set_ssl_time(br_x509_minimal_context* xc) {
 
 int main(void)
 {
+	printf("\n");
 	/* Init PS3 Network */
 	int ret;
 
