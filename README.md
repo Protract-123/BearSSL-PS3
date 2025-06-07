@@ -52,9 +52,9 @@ These steps will initialize the vcxproj for the BearSSL library itself.
 
 This will create the PS3_Release folder in the root of the cloned Git repository. This should contain BearSSL.a and BearSSL-Test.self.
 
-The test application can then be run, and it should print a variety of logs that can be viewed through a tool like ProDG.
+The test application can then be run through ProDG in order to send an https request to the target.
 
-Please note that there may be an error when building using a fresh copy of the PS3 SDK. If you go to the source of the file that has the issue, there should be multiple "noexcept" that can be removed to fix the error. No idea if this is good practice, but it's what worked for me.
+Please note that there may be an error when building using a fresh copy of the PS3 SDK. If you go to the source of the file that has the issue (initializer_list) there should be multiple "noexcept" that can be removed to fix the error. If you don't want to tamper with the PS3 SDK you can also change the C++ language to C++ 11.  
 
 I suggest copying the built static linked library and the "inc" folder to somewhere in usr\local\cell so it can be easily used in your projects.
 
