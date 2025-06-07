@@ -22,7 +22,7 @@ Requirements for the software and other tools to build, test, and push
 
 - [Git](https://git-scm.com/downloads)
 
-- [libpsutil](https://github.com/skiff/libpsutil/releases/tag/1.0.5) - May be required, not tested
+- [libpsutil](https://github.com/skiff/libpsutil/releases)
 
 I would use this guide to get everything set up if you don't have it set up already: https://www.youtube.com/watch?v=j7Mgl4oVACM
 
