@@ -24,6 +24,8 @@ Requirements for the software and other tools to build, test, and push
 
 - [libpsutil](https://github.com/skiff/libpsutil/releases)
 
+- [Python](https://www.python.org/downloads/)
+
 I would use this guide to get everything set up if you don't have it set up already: https://www.youtube.com/watch?v=j7Mgl4oVACM
 
 ### Setting Up
@@ -34,11 +36,11 @@ Clone this Git repository.
 
 Change your working directory via the command below.
 
-    cd .\BearSSL-PS3\BearSSL
+    cd .\BearSSL-PS3\
 
-Run the included PowerShell script.
+Run the included Python script.
 
-    .\init_vcxproj.ps1
+    python .\init_bearssl.py
 
 These steps will initialize the vcxproj for the BearSSL library itself.
 
